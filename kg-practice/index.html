@@ -214,7 +214,6 @@
             font-family: var(--font-burmese);
             font-size: clamp(100px, 22vw, 170px);
             font-weight: 400;
-            color: #2c1a0e;
             line-height: 1.1;
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
                 opacity 0.25s ease;
@@ -270,17 +269,6 @@
             margin-bottom: 2px;
         }
 
-        /* Character coloring */
-        .char-svg {
-            display: inline-block;
-            width: 4em;
-            height: 2em;
-            vertical-align: middle;
-            overflow: visible;
-            font-family: var(--font-burmese);
-        }
-        .char-svg .consonant { fill: #2c1a0e; }
-        .char-svg .vowel { fill: #d32f2f; }
 
         /* Mode selector dropdown */
         .mode-selector {
@@ -586,7 +574,7 @@
     <div class="app-container">
         <!-- Header -->
         <div class="header">
-            <h1>မြန်မာဗျည်းလေ့ကျင့်ခန်း</h1>
+            <h1>မြန်မာအက္ခရာလေ့ကျင့်ခန်း</h1>
         </div>
 
         <!-- Mode Selector -->
@@ -777,7 +765,7 @@
 
             function generateItemHTML(consonantChar, vowelSign) {
                 if (!vowelSign) {
-                    return '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100"><tspan class="consonant">' + escapeHtml(consonantChar) + '</tspan></text></svg>';
+                    return '<span style="color:#2c1a0e">' + escapeHtml(consonantChar) + '</span>';
                 }
 
                 var before = '', after = '';
@@ -791,12 +779,11 @@
                     }
                 }
 
-                var svg = '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100">';
-                if (before) svg += '<tspan class="vowel">' + escapeHtml(before) + '</tspan>';
-                svg += '<tspan class="consonant">' + escapeHtml(consonantChar) + '</tspan>';
-                if (after) svg += '<tspan class="vowel">' + escapeHtml(after) + '</tspan>';
-                svg += '</text></svg>';
-                return svg;
+                var html = '';
+                if (before) html += '<span style="color:#d32f2f">' + escapeHtml(before) + '</span>';
+                html += '<span style="color:#2c1a0e">' + escapeHtml(consonantChar) + '</span>';
+                if (after) html += '<span style="color:#d32f2f">' + escapeHtml(after) + '</span>';
+                return html;
             }
 
             function getItemsForMode(modeId) {
