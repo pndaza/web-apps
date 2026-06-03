@@ -279,6 +279,8 @@
             overflow: visible;
             font-family: var(--font-burmese);
         }
+        .char-svg .consonant { fill: #2c1a0e; }
+        .char-svg .vowel { fill: #d32f2f; }
 
         /* Mode selector dropdown */
         .mode-selector {
@@ -775,7 +777,7 @@
 
             function generateItemHTML(consonantChar, vowelSign) {
                 if (!vowelSign) {
-                    return '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100"><tspan fill="#2c1a0e">' + escapeHtml(consonantChar) + '</tspan></text></svg>';
+                    return '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100"><tspan class="consonant">' + escapeHtml(consonantChar) + '</tspan></text></svg>';
                 }
 
                 var before = '', after = '';
@@ -790,9 +792,9 @@
                 }
 
                 var svg = '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100">';
-                if (before) svg += '<tspan fill="#d32f2f">' + escapeHtml(before) + '</tspan>';
-                svg += '<tspan fill="#2c1a0e">' + escapeHtml(consonantChar) + '</tspan>';
-                if (after) svg += '<tspan fill="#d32f2f">' + escapeHtml(after) + '</tspan>';
+                if (before) svg += '<tspan class="vowel">' + escapeHtml(before) + '</tspan>';
+                svg += '<tspan class="consonant">' + escapeHtml(consonantChar) + '</tspan>';
+                if (after) svg += '<tspan class="vowel">' + escapeHtml(after) + '</tspan>';
                 svg += '</text></svg>';
                 return svg;
             }
