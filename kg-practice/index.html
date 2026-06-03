@@ -208,6 +208,9 @@
             transform: translateY(-2px);
         }
         .card .character-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: var(--font-burmese);
             font-size: clamp(100px, 22vw, 170px);
             font-weight: 400;
@@ -219,7 +222,6 @@
             z-index: 2;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             min-height: 1.1em;
-            text-align: center;
         }
         .card .character-display.pop-in {
             animation: popIn 0.55s cubic-bezier(0.22, 1.25, 0.36, 1) forwards;
