@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burmese Consonant Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-start: #fff8f0;
+            --bg-mid: #fef5ec;
+            --bg-end: #fdf0e6;
+            --card-bg: #ffffff;
+            --card-shadow: 0 8px 40px rgba(180, 120, 60, 0.12), 0 2px 8px rgba(180, 120, 60, 0.08);
+            --card-shadow-hover: 0 14px 50px rgba(180, 120, 60, 0.18), 0 4px 14px rgba(180, 120, 60, 0.10);
+            --text-dark: #3d2b1f;
+            --text-medium: #6b4d3a;
+            --text-light: #9b7b65;
+            --accent: #f0784a;
+            --accent-hover: #e86535;
+            --accent-glow: rgba(240, 120, 74, 0.35);
+            --button-gradient: linear-gradient(135deg, #f78a5e, #f0603a);
+            --button-gradient-hover: linear-gradient(135deg, #f99b74, #f27050);
+            --chip-bg: #fef7f2;
+            --chip-border: #f0d8c4;
+            --toggle-bg: #faf5f0;
+            --star-color: #ffb347;
+            --sparkle-1: #ffb347;
+            --sparkle-2: #ff7eb3;
+            --sparkle-3: #7ec8e3;
+            --sparkle-4: #ffe07b;
+            --font-burmese: 'CherryUnicode', 'Noto Sans Myanmar', 'Padauk', 'Myanmar Text', 'Zawgyi-One', 'Pyidaungsu', sans-serif;
+        }
+
+        @font-face {
+            font-family: 'CherryUnicode';
+            src: url('fonts/CherryUnicode.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(170deg, #fff8f0 0%, #fef3e8 25%, #fef7f2 50%, #fff5ed 75%, #fef9f5 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Floating background decorations */
+        .bg-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 50%;
+            opacity: 0.45;
+            animation: floatAround 18s infinite ease-in-out;
+        }
+        .bg-decoration:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 179, 71, 0.35) 0%, transparent 70%);
+            top: 8%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 20s;
+        }
+        .bg-decoration:nth-child(2) {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, rgba(255, 126, 179, 0.28) 0%, transparent 70%);
+            top: 70%;
+            right: 12%;
+            animation-delay: -6s;
+            animation-duration: 16s;
+        }
+        .bg-decoration:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(126, 200, 227, 0.25) 0%, transparent 70%);
+            bottom: 10%;
+            left: 15%;
+            animation-delay: -11s;
+            animation-duration: 22s;
+        }
+        .bg-decoration:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(255, 224, 123, 0.32) 0%, transparent 70%);
+            top: 20%;
+            right: 20%;
+            animation-delay: -3s;
+            animation-duration: 19s;
+        }
+        .bg-decoration:nth-child(5) {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(240, 120, 74, 0.20) 0%, transparent 70%);
+            top: 50%;
+            left: 75%;
+            animation-delay: -8s;
+            animation-duration: 24s;
+        }
+
+        @keyframes floatAround {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            15% {
+                transform: translate(30px, -25px) scale(1.1);
+            }
+            30% {
+                transform: translate(-15px, -40px) scale(0.9);
+            }
+            45% {
+                transform: translate(-35px, 10px) scale(1.05);
+            }
+            60% {
+                transform: translate(20px, 30px) scale(0.95);
+            }
+            75% {
+                transform: translate(-25px, 20px) scale(1.08);
+            }
+            90% {
+                transform: translate(10px, -15px) scale(0.92);
+            }
+        }
+
+        /* Main container */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+        }
+        .header .icon-row {
+            font-size: 42px;
+            margin-bottom: 4px;
+            animation: gentleBounce 2.5s infinite ease-in-out;
+        }
+        @keyframes gentleBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-12px);
+            }
+            55% {
+                transform: translateY(-3px);
+            }
+            75% {
+                transform: translateY(-8px);
+            }
+        }
+        .header h1 {
+            font-family: var(--font-burmese);
+            font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: 0.02em;
+        }
+        .header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: var(--card-shadow);
+            padding: clamp(28px, 5vw, 40px) clamp(20px, 4vw, 36px);
+            width: 100%;
+            text-align: center;
+            transition: box-shadow 0.5s ease, transform 0.3s ease;
+            position: relative;
+            overflow: visible;
+            border: 1.5px solid #fef0e4;
+        }
+        .card.pulse {
+            box-shadow: var(--card-shadow-hover), 0 0 0 8px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        .card .character-display {
+            font-family: var(--font-burmese);
+            font-size: clamp(100px, 22vw, 170px);
+            font-weight: 400;
+            color: #2c1a0e;
+            line-height: 1.1;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.25s ease;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            min-height: 1.1em;
+            text-align: center;
+        }
+        .card .character-display.pop-in {
+            animation: popIn 0.55s cubic-bezier(0.22, 1.25, 0.36, 1) forwards;
+        }
+        @keyframes popIn {
+            0% {
+                transform: scale(0.3) rotate(-8deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.08) rotate(1.5deg);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(0.94) rotate(-0.5deg);
+            }
+            85% {
+                transform: scale(1.02) rotate(0.2deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        .card .pronunciation {
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--text-medium);
+            margin-top: 8px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            transition: opacity 0.35s ease, max-height 0.35s ease;
+            opacity: 1;
+            max-height: 40px;
+            overflow: hidden;
+        }
+        .card .pronunciation.hidden {
+            opacity: 0;
+            max-height: 0;
+            margin-top: 0;
+        }
+        .card .pronunciation-label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        /* Character coloring */
+        .char-svg {
+            display: inline-block;
+            width: 4em;
+            height: 2em;
+            vertical-align: middle;
+            overflow: visible;
+            font-family: var(--font-burmese);
+        }
+
+        /* Mode selector dropdown */
+        .mode-selector {
+            width: 100%;
+        }
+        .mode-selector select {
+            width: 100%;
+            padding: 10px 16px;
+            font-family: var(--font-burmese), 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            background: var(--card-bg);
+            border: 1.5px solid var(--chip-border);
+            border-radius: 14px;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b4d3a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .mode-selector select:hover {
+            border-color: var(--accent);
+        }
+        .mode-selector select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Sparkle container */
+        .sparkle-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            pointer-events: none;
+            z-index: 10;
+            width: 0;
+            height: 0;
+        }
+        .sparkle-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkleBurst 0.75s ease-out forwards;
+        }
+        @keyframes sparkleBurst {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
+        }
+        .sparkle-star {
+            position: absolute;
+            font-size: 16px;
+            pointer-events: none;
+            animation: starFly 0.8s ease-out forwards;
+        }
+        @keyframes starFly {
+            0% {
+                transform: translate(0, 0) scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            40% {
+                transform: translate(calc(var(--dx) * 0.5), calc(var(--dy) * 0.5)) scale(1.4) rotate(90deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(0.2) rotate(200deg);
+                opacity: 0;
+            }
+        }
+
+        /* Button row */
+        .button-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        .btn-show {
+            flex: 1;
+            min-width: 180px;
+            padding: 16px 32px;
+            font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+            font-weight: 700;
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+            color: #fff;
+            background: var(--button-gradient);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 22px rgba(240, 100, 50, 0.35),
+                0 2px 6px rgba(200, 80, 30, 0.20);
+            transition: all 0.25s ease;
+            letter-spacing: 0.03em;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+        .btn-show:hover {
+            background: var(--button-gradient-hover);
+            box-shadow: 0 10px 30px rgba(240, 100, 50, 0.45),
+                0 4px 10px rgba(200, 80, 30, 0.25);
+            transform: translateY(-3px);
+        }
+        .btn-show:active {
+            transform: translateY(1px) scale(0.97);
+            box-shadow: 0 3px 12px rgba(240, 100, 50, 0.3),
+                0 1px 3px rgba(200, 80, 30, 0.15);
+            transition: all 0.08s ease;
+        }
+        .btn-show .btn-icon {
+            display: inline-block;
+            margin-right: 6px;
+            transition: transform 0.4s ease;
+        }
+        .btn-show:active .btn-icon {
+            transform: rotate(180deg) scale(1.3);
+        }
+        /* Ripple */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: rippleEffect 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .btn-toggle {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+            color: var(--text-medium);
+            background: var(--toggle-bg);
+            border: 1.5px solid #e8d5c4;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            letter-spacing: 0.02em;
+        }
+        .btn-toggle:hover {
+            background: #fef0e6;
+            border-color: #d4b89c;
+            color: var(--text-dark);
+        }
+        .btn-toggle:active {
+            transform: scale(0.95);
+            background: #fde8d8;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+        .stats-row .stat {
+            background: #fefaf6;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #f0dfce;
+            letter-spacing: 0.02em;
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+        }
+        .stats-row .stat strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* History */
+        .history-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            min-height: 40px;
+        }
+        .history-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .history-chip {
+            font-family: var(--font-burmese);
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--chip-bg);
+            border: 1px solid var(--chip-border);
+            border-radius: 14px;
+            padding: 6px 13px;
+            color: #4a3020;
+            transition: all 0.3s ease;
+            animation: chipAppear 0.4s cubic-bezier(0.22, 1.1, 0.36, 1) forwards;
+            cursor: default;
+        }
+        @keyframes chipAppear {
+            0% {
+                transform: scale(0) rotate(-20deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        .history-chip:first-of-type {
+            animation-delay: 0s;
+        }
+        .history-chip:nth-child(2) {
+            animation-delay: 0.04s;
+        }
+        .history-chip:nth-child(3) {
+            animation-delay: 0.08s;
+        }
+        .history-chip:nth-child(4) {
+            animation-delay: 0.12s;
+        }
+        .history-chip:nth-child(5) {
+            animation-delay: 0.16s;
+        }
+        .history-chip:nth-child(6) {
+            animation-delay: 0.20s;
+        }
+        .history-chip:nth-child(7) {
+            animation-delay: 0.24s;
+        }
+        .history-chip:nth-child(8) {
+            animation-delay: 0.28s;
+        }
+
+        /* Footer note */
+        .footer-note {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            text-align: center;
+            opacity: 0.7;
+            letter-spacing: 0.03em;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .card {
+                border-radius: 22px;
+                padding: 22px 16px;
+            }
+            .card .character-display {
+                font-size: clamp(80px, 28vw, 120px);
+            }
+            .btn-show {
+                padding: 14px 22px;
+                font-size: 1rem;
+                min-width: 150px;
+            }
+            .btn-toggle {
+                padding: 12px 16px;
+                font-size: 0.8rem;
+            }
+            .button-row {
+                gap: 8px;
+            }
+            .mode-selector select {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating background decorations -->
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <!-- Main App -->
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>မြန်မာဗျည်းလေ့ကျင့်ခန်း</h1>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <select id="modeSelect">
+                <option value="consonant_only">ဗျည်းသက်သက်</option>
+                <option value="aa">ဗျည်း + အာ , အား</option>
+                <option value="i">ဗျည်း + အိ , အီ , အီး</option>
+                <option value="u">ဗျည်း + အု , အူ , အူး</option>
+                <option value="e">ဗျည်း + အေ, အေ့, အေး</option>
+                <option value="o">ဗျည်း + အော့, အော်, အော</option>
+                <option value="all">ဗျည်း + သရများ</option>
+            </select>
+        </div>
+
+        <!-- Card -->
+        <div class="card" id="mainCard">
+            <div class="character-display" id="characterDisplay">က</div>
+            <div class="pronunciation" id="pronunciationText">ka</div>
+            <!-- Sparkle container -->
+            <div class="sparkle-container" id="sparkleContainer"></div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-row">
+            <button class="btn-show" id="btnShow" aria-label="Show new consonant">
+                <span class="btn-icon">🎲</span> Show New Character
+            </button>
+            <button class="btn-toggle" id="btnToggle" aria-label="Toggle pronunciation visibility">
+                👁️ Hide Sound
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <span class="stat">Total shown: <strong id="totalCount">1</strong></span>
+            <span class="stat">This round: <strong id="roundProgress">1/33</strong></span>
+        </div>
+
+        <!-- History -->
+        <div class="history-row" id="historyRow">
+            <span class="history-label">Recent:</span>
+        </div>
+
+        <!-- Footer -->
+        <p class="footer-note">💡 Tip: Press <strong>Spacebar</strong> or <strong>Enter</strong> to show a new character</p>
+    </div>
+
+    <script>
+        (function() {
+            // ─────────────────────────────────────
+            // Burmese Consonants Data (33 standard)
+            // ─────────────────────────────────────
+            const consonants = [
+                { char: 'က', pronunciation: 'ka (ကကြီး)' },
+                { char: 'ခ', pronunciation: 'kha (ခခွေး)' },
+                { char: 'ဂ', pronunciation: 'ga (ဂငယ်)' },
+                { char: 'ဃ', pronunciation: 'gha (ဃကြီး)' },
+                { char: 'င', pronunciation: 'nga (င)' },
+                { char: 'စ', pronunciation: 'sa (စလုံး)' },
+                { char: 'ဆ', pronunciation: 'sha (ဆလိမ်)' },
+                { char: 'ဇ', pronunciation: 'za (ဇကွဲ)' },
+                { char: 'ဈ', pronunciation: 'zha (ဈမျဉ်းဆွဲ)' },
+                { char: 'ည', pronunciation: 'nya (ည)' },
+                { char: 'ဋ', pronunciation: 'ta (ဋသန်လျင်းချိတ်)' },
+                { char: 'ဌ', pronunciation: 'tha (ဌဝမ်းဘဲ)' },
+                { char: 'ဍ', pronunciation: 'da (ဍရင်ကောက်)' },
+                { char: 'ဎ', pronunciation: 'dha (ဎရေမှုတ်)' },
+                { char: 'ဏ', pronunciation: 'na (ဏကြီး)' },
+                { char: 'တ', pronunciation: 'ta (တဝမ်းပူ)' },
+                { char: 'ထ', pronunciation: 'hta (ထဆင်ထူး)' },
+                { char: 'ဒ', pronunciation: 'da (ဒထွေး)' },
+                { char: 'ဓ', pronunciation: 'dha (ဓအောက်ခြိုက်)' },
+                { char: 'န', pronunciation: 'na (နငယ်)' },
+                { char: 'ပ', pronunciation: 'pa (ပစောက်)' },
+                { char: 'ဖ', pronunciation: 'pha (ဖဦးထုပ်)' },
+                { char: 'ဗ', pronunciation: 'ba (ဗထက်ခြိုက်)' },
+                { char: 'ဘ', pronunciation: 'bha (ဘကုန်း)' },
+                { char: 'မ', pronunciation: 'ma (မ)' },
+                { char: 'ယ', pronunciation: 'ya (ယပက်လက်)' },
+                { char: 'ရ', pronunciation: 'ra (ရကောက်)' },
+                { char: 'လ', pronunciation: 'la (လ)' },
+                { char: 'ဝ', pronunciation: 'wa (ဝ)' },
+                { char: 'သ', pronunciation: 'tha (သ)' },
+                { char: 'ဟ', pronunciation: 'ha (ဟ)' },
+                { char: 'ဠ', pronunciation: 'la (ဠကြီး)' },
+                { char: 'အ', pronunciation: 'ah (အ)' },
+            ];
+
+            // ─────────────────────────────────────
+            // Vowel Mode Definitions
+            // ─────────────────────────────────────
+            const vowelModes = [
+                { id: 'consonant_only', label: 'ဗျည်းသက်သက်' },
+                { id: 'aa', label: 'ဗျည်း + အာ , အား' },
+                { id: 'i', label: 'ဗျည်း + အိ , အီ , အီး' },
+                { id: 'u', label: 'ဗျည်း + အု , အူ , အူး' },
+                { id: 'e', label: 'ဗျည်း + အေ, အေ့, အေး' },
+                { id: 'o', label: 'ဗျည်း + အော့, အော်, အော' },
+                { id: 'all', label: 'ဗျည်း + သရများ' },
+            ];
+
+            const vowelDetails = {
+                aa: { vowels: ['ာ', 'ား'], pronLabels: ['အာ', 'အား'] },
+                i: { vowels: ['ိ', 'ီ', 'ီး'], pronLabels: ['အိ', 'အီ', 'အီး'] },
+                u: { vowels: ['ု', 'ူ', 'ူး'], pronLabels: ['အု', 'အူ', 'အူး'] },
+                e: { vowels: ['ေ', 'ေ့', 'ေး'], pronLabels: ['အေ', 'အေ့', 'အေး'] },
+                o: { vowels: ['ော', 'ော့', 'ော်'], pronLabels: ['အော', 'အော့', 'အော်'] },
+            };
+
+            // ─────────────────────────────────────
+            // State
+            // ─────────────────────────────────────
+            let shuffledQueue = [];
+            let totalShown = 0;
+            let roundShown = 0;
+            let totalItemsInRound = 0;
+            let currentChar = null;
+            let currentModeId = 'consonant_only';
+            let pronunciationVisible = true;
+            const maxHistory = 8;
+            let history = [];
+
+            // ─────────────────────────────────────
+            // DOM Elements
+            // ─────────────────────────────────────
+            const characterDisplay = document.getElementById('characterDisplay');
+            const pronunciationText = document.getElementById('pronunciationText');
+            const btnShow = document.getElementById('btnShow');
+            const btnToggle = document.getElementById('btnToggle');
+            const mainCard = document.getElementById('mainCard');
+            const sparkleContainer = document.getElementById('sparkleContainer');
+            const totalCountEl = document.getElementById('totalCount');
+            const roundProgressEl = document.getElementById('roundProgress');
+            const historyRow = document.getElementById('historyRow');
+            const modeSelect = document.getElementById('modeSelect');
+
+            // ─────────────────────────────────────
+            // Fisher-Yates Shuffle
+            // ─────────────────────────────────────
+            function shuffleArray(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            function refillQueue() {
+                let items = getItemsForMode(currentModeId);
+                let shuffled = shuffleArray(items);
+                if (currentChar && shuffled.length > 1 && shuffled[0].text === currentChar.text) {
+                    const swapIdx = Math.floor(Math.random() * (shuffled.length - 1)) + 1;
+                    [shuffled[0], shuffled[swapIdx]] = [shuffled[swapIdx], shuffled[0]];
+                }
+                shuffledQueue = shuffled;
+                roundShown = 0;
+                totalItemsInRound = shuffled.length;
+            }
+
+            // ─────────────────────────────────────
+            // Vowel Mode Helpers
+            // ─────────────────────────────────────
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            var tallAaConsonants = ['ခ', 'ဂ', 'င', 'ဒ', 'ပ', 'ဝ'];
+
+            function getAaSign(consonantChar) {
+                return tallAaConsonants.indexOf(consonantChar) !== -1 ? 'ါ' : 'ာ';
+            }
+
+            function getVowelsForConsonant(modeId, consonantChar) {
+                if (modeId === 'aa') {
+                    var aa = getAaSign(consonantChar);
+                    return [aa, aa + 'း'];
+                }
+                if (modeId === 'o') {
+                    var aa = getAaSign(consonantChar);
+                    return ['ေ' + aa, 'ေ' + aa + '့', 'ေ' + aa + '်'];
+                }
+                return vowelDetails[modeId].vowels;
+            }
+
+            function generateItemHTML(consonantChar, vowelSign) {
+                if (!vowelSign) {
+                    return '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100"><tspan fill="#2c1a0e">' + escapeHtml(consonantChar) + '</tspan></text></svg>';
+                }
+
+                var before = '', after = '';
+
+                for (var _ci = 0; _ci < vowelSign.length; _ci++) {
+                    var ch = vowelSign.charAt(_ci);
+                    if (ch === 'ေ') {
+                        before += ch;
+                    } else {
+                        after += ch;
+                    }
+                }
+
+                var svg = '<svg class="char-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><text x="200" y="140" text-anchor="middle" font-size="100">';
+                if (before) svg += '<tspan fill="#d32f2f">' + escapeHtml(before) + '</tspan>';
+                svg += '<tspan fill="#2c1a0e">' + escapeHtml(consonantChar) + '</tspan>';
+                if (after) svg += '<tspan fill="#d32f2f">' + escapeHtml(after) + '</tspan>';
+                svg += '</text></svg>';
+                return svg;
+            }
+
+            function getItemsForMode(modeId) {
+                if (modeId === 'consonant_only') {
+                    return consonants.map(function(c) {
+                        return {
+                            html: generateItemHTML(c.char, ''),
+                            text: c.char,
+                            pronunciation: c.pronunciation,
+                            consonant: c,
+                        };
+                    });
+                }
+
+                var items = [];
+                var modesToUse = modeId === 'all' ? ['aa', 'i', 'u', 'e', 'o'] : [modeId];
+
+                for (var ci = 0; ci < consonants.length; ci++) {
+                    var c = consonants[ci];
+                    for (var mi = 0; mi < modesToUse.length; mi++) {
+                        var modeId = modesToUse[mi];
+                        var mode = vowelDetails[modeId];
+                        var vowels = getVowelsForConsonant(modeId, c.char);
+                        for (var vi = 0; vi < vowels.length; vi++) {
+                            var vowel = vowels[vi];
+                            items.push({
+                                html: generateItemHTML(c.char, vowel),
+                                text: c.char + vowel,
+                                pronunciation: c.char + ' + ' + mode.pronLabels[vi],
+                                consonant: c,
+                                vowelSign: vowel,
+                            });
+                        }
+                    }
+                }
+                return items;
+            }
+
+            // ─────────────────────────────────────
+            // Sparkle Effect
+            // ─────────────────────────────────────
+            function createSparkles() {
+                const colors = ['#ffb347', '#ff7eb3', '#7ec8e3', '#ffe07b', '#ff9a76', '#a29bfe',
+                '#fd79a8'];
+                const starEmojis = ['✨', '⭐', '🌟', '💫', '✨', '⭐'];
+
+                // Particle dots
+                const particleCount = 14;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('sparkle-particle');
+                    const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+                    const distance = 60 + Math.random() * 100;
+                    const dx = Math.cos(angle) * distance;
+                    const dy = Math.sin(angle) * distance;
+                    particle.style.setProperty('--dx', dx + 'px');
+                    particle.style.setProperty('--dy', dy + 'px');
+                    particle.style.width = (5 + Math.random() * 10) + 'px';
+                    particle.style.height = particle.style.width;
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.animationDuration = (0.5 + Math.random() * 0.6) + 's';
+                    sparkleContainer.appendChild(particle);
+
+                    // Cleanup
+                    setTimeout(() => particle.remove(), 900);
+                }
+
+                // Star emojis
+                const starCount = 6;
+                for (let i = 0; i < starCount; i++) {
+                    const star = document.createElement('span');
+                    star.classList.add('sparkle-star');
+                    star.textContent = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+                    const angle = (Math.PI * 2 * i) / starCount + Math.random() * 0.6;
+                    const distance = 50 + Math.random() * 80;
+                    const dx = Math.cos(angle) * distance;
+                    const dy = Math.sin(angle) * distance;
+                    star.style.setProperty('--dx', dx + 'px');
+                    star.style.setProperty('--dy', dy + 'px');
+                    star.style.fontSize = (14 + Math.random() * 18) + 'px';
+                    star.style.animationDuration = (0.55 + Math.random() * 0.5) + 's';
+                    sparkleContainer.appendChild(star);
+
+                    setTimeout(() => star.remove(), 1000);
+                }
+            }
+
+            // ─────────────────────────────────────
+            // Ripple Effect on Button
+            // ─────────────────────────────────────
+            function createRipple(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = btnShow.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                btnShow.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 650);
+            }
+
+            // ─────────────────────────────────────
+            // Show Character
+            // ─────────────────────────────────────
+            function showNewCharacter(triggeredByUser = true) {
+                // Refill queue if needed
+                if (shuffledQueue.length === 0) {
+                    refillQueue();
+                }
+
+                // Pop next item
+                const nextItem = shuffledQueue.pop();
+                currentChar = nextItem;
+                roundShown++;
+                totalShown++;
+
+                // Update display with animation
+                characterDisplay.classList.remove('pop-in');
+                void characterDisplay.offsetWidth; // Force reflow
+                characterDisplay.innerHTML = nextItem.html;
+                characterDisplay.classList.add('pop-in');
+
+                // Update pronunciation
+                pronunciationText.textContent = nextItem.pronunciation;
+                if (!pronunciationVisible) {
+                    pronunciationText.classList.add('hidden');
+                } else {
+                    pronunciationText.classList.remove('hidden');
+                }
+
+                // Update stats
+                totalCountEl.textContent = totalShown;
+                roundProgressEl.textContent = roundShown + '/' + totalItemsInRound;
+
+                // Add to history
+                history.unshift(nextItem.text);
+                if (history.length > maxHistory) {
+                    history.pop();
+                }
+                updateHistoryDisplay();
+
+                // Sparkle effect
+                if (triggeredByUser) {
+                    createSparkles();
+                }
+
+                // Card pulse
+                mainCard.classList.add('pulse');
+                setTimeout(() => mainCard.classList.remove('pulse'), 500);
+            }
+
+            // ─────────────────────────────────────
+            // History Display
+            // ─────────────────────────────────────
+            function updateHistoryDisplay() {
+                // Clear existing chips (keep the label)
+                const existingChips = historyRow.querySelectorAll('.history-chip');
+                existingChips.forEach(chip => chip.remove());
+
+                // Add chips
+                history.forEach((char, index) => {
+                    const chip = document.createElement('span');
+                    chip.classList.add('history-chip');
+                    chip.textContent = char;
+                    chip.title = 'Recently shown consonant';
+                    chip.style.animationDelay = (index * 0.04) + 's';
+                    historyRow.appendChild(chip);
+                });
+            }
+
+            // ─────────────────────────────────────
+            // Toggle Pronunciation
+            // ─────────────────────────────────────
+            function togglePronunciation() {
+                pronunciationVisible = !pronunciationVisible;
+                if (pronunciationVisible) {
+                    pronunciationText.classList.remove('hidden');
+                    btnToggle.innerHTML = '👁️ Hide Sound';
+                } else {
+                    pronunciationText.classList.add('hidden');
+                    btnToggle.innerHTML = '👁‍🗨 Show Sound';
+                }
+            }
+
+            // ─────────────────────────────────────
+            // Event Listeners
+            // ─────────────────────────────────────
+            btnShow.addEventListener('click', function(e) {
+                createRipple(e);
+                showNewCharacter(true);
+                // Brief haptic-like visual feedback
+                btnShow.style.transform = 'scale(0.93)';
+                setTimeout(() => {
+                    btnShow.style.transform = '';
+                }, 120);
+            });
+
+            btnToggle.addEventListener('click', function() {
+                togglePronunciation();
+            });
+
+            // Mode selector
+            modeSelect.addEventListener('change', function() {
+                currentModeId = this.value;
+                refillQueue();
+                showNewCharacter(false);
+            });
+
+            // Keyboard support
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space' || e.code === 'Enter') {
+                    e.preventDefault();
+                    // Simulate click on the show button
+                    const fakeEvent = new MouseEvent('click', {
+                        clientX: btnShow.getBoundingClientRect().left + btnShow.offsetWidth / 2,
+                        clientY: btnShow.getBoundingClientRect().top + btnShow.offsetHeight / 2,
+                        bubbles: true,
+                    });
+                    createRipple(fakeEvent);
+                    showNewCharacter(true);
+                    btnShow.style.transform = 'scale(0.93)';
+                    setTimeout(() => {
+                        btnShow.style.transform = '';
+                    }, 120);
+                }
+                // Toggle with 'T' key
+                if (e.code === 'KeyT' && !e.ctrlKey && !e.metaKey && document.activeElement ===
+                    document.body) {
+                    e.preventDefault();
+                    togglePronunciation();
+                }
+            });
+
+            // Touch feedback for mobile
+            btnShow.addEventListener('touchstart', function() {
+                btnShow.style.transform = 'scale(0.95)';
+            }, { passive: true });
+            btnShow.addEventListener('touchend', function() {
+                btnShow.style.transform = '';
+            });
+
+            // ─────────────────────────────────────
+            // Initialize
+            // ─────────────────────────────────────
+            function init() {
+                refillQueue();
+                // Show first character (not triggered by user, no sparkle)
+                const firstItem = shuffledQueue.pop();
+                currentChar = firstItem;
+                roundShown = 1;
+                totalShown = 1;
+                characterDisplay.innerHTML = firstItem.html;
+                pronunciationText.textContent = firstItem.pronunciation;
+                totalCountEl.textContent = '1';
+                roundProgressEl.textContent = '1/' + totalItemsInRound;
+                history.unshift(firstItem.text);
+                updateHistoryDisplay();
+                pronunciationVisible = true;
+                pronunciationText.classList.remove('hidden');
+                btnToggle.innerHTML = '👁️ Hide Sound';
+            }
+
+            init();
+
+            console.log('📖 Burmese Consonant Practice ready!');
+            console.log('   Click "Show New Character" or press Spacebar/Enter');
+            console.log('   Press "T" to toggle pronunciation visibility');
+            console.log('   Total consonants: ' + consonants.length);
+        })();
+    </script>
+</body>
+</html>
