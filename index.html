@@ -2,11 +2,122 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=kg-practice/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Web Apps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-start: #fff8f0;
+            --bg-mid: #fef5ec;
+            --bg-end: #fdf0e6;
+            --card-bg: #ffffff;
+            --card-shadow: 0 8px 40px rgba(180, 120, 60, 0.12), 0 2px 8px rgba(180, 120, 60, 0.08);
+            --text-dark: #3d2b1f;
+            --text-medium: #6b4d3a;
+            --text-light: #9b7b65;
+            --accent: #f0784a;
+            --button-gradient: linear-gradient(135deg, #f78a5e, #f0603a);
+            --font-burmese: 'Noto Sans Myanmar', 'Padauk', 'Myanmar Text', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(170deg, #fff8f0 0%, #fef3e8 50%, #fef7f2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            text-align: center;
+        }
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+        .subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        .apps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+            text-align: left;
+            transition: all 0.25s ease;
+            border: 1.5px solid #fef0e4;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .app-card:hover {
+            box-shadow: 0 14px 50px rgba(180, 120, 60, 0.18);
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+        .app-card .icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        .app-card .info h3 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+        .app-card .info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .app-card .arrow {
+            margin-left: auto;
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+        footer {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to <a href="kg-practice/">kg-practice</a>...</p>
+    <div class="container">
+        <div>
+            <h1>🧩 Web Apps</h1>
+            <p class="subtitle">A collection of little web tools and experiments</p>
+        </div>
+
+        <div class="apps">
+            <a class="app-card" href="kg-practice/">
+                <span class="icon">🀄</span>
+                <div class="info">
+                    <h3>KG Practice</h3>
+                    <p>Burmese consonant &amp; vowel practice for kindergartners</p>
+                </div>
+                <span class="arrow">→</span>
+            </a>
+        </div>
+
+        <footer>pndaza.github.io/web-apps</footer>
+    </div>
 </body>
 </html>
