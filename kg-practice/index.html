@@ -249,7 +249,7 @@
             font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
             font-size: clamp(1rem, 2.5vw, 1.2rem);
             color: var(--text-medium);
-            margin-top: 8px;
+            margin-top: 40px;
             font-weight: 500;
             transition: opacity 0.35s ease, max-height 0.35s ease;
             opacity: 1;
@@ -581,9 +581,11 @@
         <div class="mode-selector">
             <select id="modeSelect">
                 <option value="consonant_only">ဗျည်းသက်သက်</option>
-                <option value="aa">ဗျည်း + အာ , အား</option>
+                <option value="aa">ဗျည်း + အ, အာ, အား</option>
                 <option value="i">ဗျည်း + အိ , အီ , အီး</option>
+                <option value="aa_i">ဗျည်း + အ, အာ, အား + အိ, အီ, အီး</option>
                 <option value="u">ဗျည်း + အု , အူ , အူး</option>
+                <option value="aa_i_u">ဗျည်း + အ, အာ, အား + အိ, အီ, အီး + အု, အူ, အူး</option>
                 <option value="e">ဗျည်း + အေ, အေ့, အေး</option>
                 <option value="o">ဗျည်း + အော့, အော်, အော</option>
                 <option value="all">ဗျည်း + သရများ</option>
@@ -601,7 +603,7 @@
         <!-- Buttons -->
         <div class="button-row">
             <button class="btn-show" id="btnShow" aria-label="Show new consonant">
-                <span class="btn-icon">🎲</span> Show New Character
+                <span class="btn-icon">🎲</span> Show Next
             </button>
             <button class="btn-toggle" id="btnToggle" aria-label="Toggle pronunciation visibility">
                 👁️ Hide Sound
@@ -669,16 +671,18 @@
             // ─────────────────────────────────────
             const vowelModes = [
                 { id: 'consonant_only', label: 'ဗျည်းသက်သက်' },
-                { id: 'aa', label: 'ဗျည်း + အာ , အား' },
+                { id: 'aa', label: 'ဗျည်း + အ, အာ, အား' },
                 { id: 'i', label: 'ဗျည်း + အိ , အီ , အီး' },
+                { id: 'aa_i', label: 'ဗျည်း + အ, အာ, အား + အိ, အီ, အီး' },
                 { id: 'u', label: 'ဗျည်း + အု , အူ , အူး' },
+                { id: 'aa_i_u', label: 'ဗျည်း + အ, အာ, အား + အိ, အီ, အီး + အု, အူ, အူး' },
                 { id: 'e', label: 'ဗျည်း + အေ, အေ့, အေး' },
                 { id: 'o', label: 'ဗျည်း + အော့, အော်, အော' },
                 { id: 'all', label: 'ဗျည်း + သရများ' },
             ];
 
             const vowelDetails = {
-                aa: { vowels: ['ာ', 'ား'], pronLabels: ['အာ', 'အား'] },
+                aa: { vowels: ['', 'ာ', 'ား'], pronLabels: ['အ', 'အာ', 'အား'] },
                 i: { vowels: ['ိ', 'ီ', 'ီး'], pronLabels: ['အိ', 'အီ', 'အီး'] },
                 u: { vowels: ['ု', 'ူ', 'ူး'], pronLabels: ['အု', 'အူ', 'အူး'] },
                 e: { vowels: ['ေ', 'ေ့', 'ေး'], pronLabels: ['အေ', 'အေ့', 'အေး'] },
@@ -754,7 +758,7 @@
             function getVowelsForConsonant(modeId, consonantChar) {
                 if (modeId === 'aa') {
                     var aa = getAaSign(consonantChar);
-                    return [aa, aa + 'း'];
+                    return ['', aa, aa + 'း'];
                 }
                 if (modeId === 'o') {
                     var aa = getAaSign(consonantChar);
@@ -799,7 +803,8 @@
                 }
 
                 var items = [];
-                var modesToUse = modeId === 'all' ? ['aa', 'i', 'u', 'e', 'o'] : [modeId];
+                var customModes = { aa_i: ['aa', 'i'], aa_i_u: ['aa', 'i', 'u'] };
+                var modesToUse = modeId === 'all' ? ['aa', 'i', 'u', 'e', 'o'] : (customModes[modeId] || [modeId]);
 
                 for (var ci = 0; ci < consonants.length; ci++) {
                     var c = consonants[ci];
