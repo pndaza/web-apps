@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burmese Text → PNG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --bg-start: #fff8f0;
+            --card-bg: #ffffff;
+            --card-shadow: 0 8px 40px rgba(180, 120, 60, 0.12), 0 2px 8px rgba(180, 120, 60, 0.08);
+            --text-dark: #3d2b1f;
+            --text-medium: #6b4d3a;
+            --text-light: #9b7b65;
+            --accent: #f0784a;
+            --accent-hover: #e86535;
+            --accent-glow: rgba(240, 120, 74, 0.35);
+            --button-gradient: linear-gradient(135deg, #f78a5e, #f0603a);
+            --button-gradient-hover: linear-gradient(135deg, #f99b74, #f27050);
+            --consonant-color: #2c1a0e;
+            --vowel-color: #d32f2f;
+            --font-burmese: 'CherryUnicode', 'Noto Sans Myanmar', 'Padauk', 'Myanmar Text', 'Zawgyi-One', 'Pyidaungsu', sans-serif;
+        }
+
+        @font-face {
+            font-family: 'CherryUnicode';
+            src: url('fonts/CherryUnicode.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(170deg, #fff8f0 0%, #fef3e8 25%, #fef7f2 50%, #fff5ed 75%, #fef9f5 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 24px 20px 60px;
+            color: var(--text-dark);
+        }
+
+        .app-container {
+            position: relative;
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .header h1 {
+            font-family: var(--font-burmese);
+            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: clamp(18px, 3vw, 26px);
+            border: 1.5px solid #fef0e4;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px 16px;
+            font-family: var(--font-burmese);
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: #fffdf9;
+            border: 1.5px solid #f0d8c4;
+            border-radius: 14px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        textarea::placeholder {
+            color: #c4ab95;
+        }
+
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        select {
+            padding: 9px 30px 9px 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            background-color: #fffaf4;
+            border: 1.5px solid #f0d8c4;
+            border-radius: 12px;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b4d3a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .spacer { flex: 1; }
+
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .toggle .track {
+            width: 38px; height: 22px;
+            background: #e8d5c4;
+            border-radius: 50px;
+            position: relative;
+            transition: background 0.25s ease;
+            flex-shrink: 0;
+        }
+        .toggle .thumb {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 18px; height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        }
+        .toggle input:checked + .track { background: var(--accent); }
+        .toggle input:checked + .track .thumb { transform: translateX(16px); }
+        .toggle input:focus-visible + .track {
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .toggle .toggle-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            white-space: nowrap;
+        }
+
+        .btn {
+            padding: 12px 22px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: var(--button-gradient);
+            box-shadow: 0 6px 22px rgba(240, 100, 50, 0.35);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--button-gradient-hover);
+            box-shadow: 0 10px 30px rgba(240, 100, 50, 0.45);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .btn-secondary {
+            color: var(--text-medium);
+            background: #faf5f0;
+            border: 1.5px solid #e8d5c4;
+        }
+        .btn-secondary:hover {
+            background: #fef0e6;
+            border-color: #d4b89c;
+            color: var(--text-dark);
+        }
+        .btn-secondary:active {
+            transform: scale(0.96);
+        }
+
+        .legend {
+            display: flex;
+            gap: 14px;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            flex-wrap: wrap;
+        }
+        .legend .swatch {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .preview-section h2 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 10px;
+        }
+
+        #previewArea {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .preview-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+        .preview-stage {
+            width: 100%;
+            min-height: 140px;
+            max-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fffaf4;
+            border: 1px dashed #ecd5c0;
+            border-radius: 14px;
+            padding: 16px;
+            overflow: auto;
+        }
+        .preview-stage img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(180, 120, 60, 0.10);
+        }
+        .preview-empty {
+            padding: 24px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .preview-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .btn-nav {
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Noto Sans Myanmar', 'Segoe UI', sans-serif;
+            color: var(--text-medium);
+            background: #faf5f0;
+            border: 1.5px solid #e8d5c4;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: #fef0e6;
+            border-color: var(--accent);
+            color: var(--text-dark);
+        }
+        .btn-nav:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        .btn-nav:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+        .preview-counter {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            min-width: 64px;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .footer-note {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            text-align: center;
+            opacity: 0.75;
+            margin-top: 6px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #3d2b1f;
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+            opacity: 0;
+            transition: all 0.35s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.error { background: #c0392b; }
+
+        @media (max-width: 480px) {
+            textarea { font-size: 1.05rem; }
+            .btn { padding: 11px 18px; font-size: 0.88rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>မြန်မာစာ ပုံဖမ်း</h1>
+            <div class="subtitle">Type Burmese text — each line becomes a color-coded PNG</div>
+        </div>
+
+        <div class="card">
+            <label for="inputText" id="textLabel">Text (one line per image)</label>
+            <textarea id="inputText" placeholder="ဥပမာ —&#10;မင်္ဂလာပါ&#10;နေကောင်းလား&#10;ကျေးဇူးတင်ပါတယ်"></textarea>
+
+            <div class="control-row">
+                <label class="toggle" title="When on, each line becomes its own image (ZIP). When off, all lines combine into one PNG.">
+                    <input type="checkbox" id="perLineToggle" checked>
+                    <span class="track"><span class="thumb"></span></span>
+                    <span class="toggle-label" id="toggleLabel">Per line</span>
+                </label>
+
+                <label for="fontSize">Size</label>
+                <select id="fontSize">
+                    <option value="48">S</option>
+                    <option value="80" selected>M</option>
+                    <option value="120">L</option>
+                    <option value="160">XL</option>
+                </select>
+
+                <div class="legend">
+                    <span><span class="swatch" style="background:#2c1a0e"></span>consonant</span>
+                    <span><span class="swatch" style="background:#d32f2f"></span>vowel / mark</span>
+                </div>
+
+                <div class="spacer"></div>
+
+                <button class="btn btn-secondary" id="btnClear" type="button">Clear</button>
+                <button class="btn btn-primary" id="btnDownload" type="button">⬇ Download ZIP</button>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <h2>Preview</h2>
+            <div id="previewArea">
+                <div class="preview-view">
+                    <div class="preview-stage" id="previewStage">
+                        <div class="preview-empty">Type something above to see a preview…</div>
+                    </div>
+                    <div class="preview-nav">
+                        <button class="btn-nav" id="btnPrev" type="button" disabled>◀ Prev</button>
+                        <span class="preview-counter" id="previewCounter">—</span>
+                        <button class="btn-nav" id="btnNext" type="button" disabled>Next ▶</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-note" id="footerNote">💡 One PNG per non-empty line. Vowels &amp; marks render in red, consonants in dark brown — same as kg-practice.</p>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ─────────────────────────────────────
+            // Config
+            // ─────────────────────────────────────
+            var CONSONANT_COLOR = '#2c1a0e';
+            var VOWEL_COLOR     = '#d32f2f';
+
+            // Independent vowels (အ, ဣ, ဤ, ဥ, ဦ, ဧ, ဩ, ဪ …)
+            var INDEPENDENT_VOWELS = [0x1021, 0x1023, 0x1024, 0x1025, 0x1026, 0x1027, 0x1028, 0x1029, 0x102A];
+
+            // ─────────────────────────────────────
+            // DOM
+            // ─────────────────────────────────────
+            var inputText      = document.getElementById('inputText');
+            var fontSizeSelect = document.getElementById('fontSize');
+            var btnDownload    = document.getElementById('btnDownload');
+            var btnClear       = document.getElementById('btnClear');
+            var previewArea    = document.getElementById('previewArea');
+            var toast          = document.getElementById('toast');
+            var perLineToggle  = document.getElementById('perLineToggle');
+            var textLabel      = document.getElementById('textLabel');
+            var toggleLabel    = document.getElementById('toggleLabel');
+            var footerNote     = document.getElementById('footerNote');
+            var previewStage   = document.getElementById('previewStage');
+            var previewCounter = document.getElementById('previewCounter');
+            var btnPrev        = document.getElementById('btnPrev');
+            var btnNext        = document.getElementById('btnNext');
+
+            // ─────────────────────────────────────
+            // Lines
+            // ─────────────────────────────────────
+            function getLines() {
+                var raw = inputText.value.split('\n');
+                var lines = [];
+                for (var i = 0; i < raw.length; i++) {
+                    var t = raw[i].replace(/\s+$/,'').replace(/^\s+/,'');
+                    if (t.length > 0) lines.push(t);
+                }
+                return lines;
+            }
+
+            // ─────────────────────────────────────
+            // Preview (single-line carousel showing actual rendered output)
+            // ─────────────────────────────────────
+            var previewTimer = null;
+            var previewIndex = 0;
+            var previewRenderToken = 0;
+
+            function schedulePreview() {
+                if (previewTimer) clearTimeout(previewTimer);
+                previewTimer = setTimeout(renderPreview, 80);
+            }
+
+            function renderPreview() {
+                var lines = getLines();
+
+                if (lines.length === 0) {
+                    previewRenderToken++;
+                    previewIndex = 0;
+                    previewStage.innerHTML = '<div class="preview-empty">Type something above to see a preview…</div>';
+                    previewCounter.textContent = '—';
+                    btnPrev.disabled = true;
+                    btnNext.disabled = true;
+                    return;
+                }
+
+                // Clamp current index to valid range (text may have shrunk)
+                if (previewIndex >= lines.length) previewIndex = lines.length - 1;
+                if (previewIndex < 0) previewIndex = 0;
+
+                updatePreviewNav(lines.length);
+
+                var idx = previewIndex;
+                var fontSize = parseInt(fontSizeSelect.value, 10);
+                var myToken = ++previewRenderToken;
+
+                previewStage.innerHTML = '<div class="preview-empty">Rendering…</div>';
+
+                renderLineToCanvas(lines[idx], fontSize).then(function (canvas) {
+                    if (myToken !== previewRenderToken) return; // a newer render superseded us
+                    previewStage.innerHTML = '';
+                    var img = document.createElement('img');
+                    img.src = canvas.toDataURL('image/png');
+                    img.alt = 'Preview of line ' + (idx + 1);
+                    previewStage.appendChild(img);
+                }).catch(function () {
+                    if (myToken !== previewRenderToken) return;
+                    previewStage.innerHTML = '<div class="preview-empty">Preview failed — try retyping.</div>';
+                });
+            }
+
+            function updatePreviewNav(count) {
+                previewCounter.textContent = (previewIndex + 1) + ' / ' + count;
+                btnPrev.disabled = previewIndex <= 0;
+                btnNext.disabled = previewIndex >= count - 1;
+            }
+
+            function navigatePreview(delta) {
+                var lines = getLines();
+                if (lines.length === 0) return;
+                var next = previewIndex + delta;
+                if (next < 0 || next >= lines.length) return;
+                previewIndex = next;
+                renderPreview();
+            }
+
+            // ─────────────────────────────────────
+            // Toast
+            // ─────────────────────────────────────
+            var toastTimer = null;
+            function showToast(msg, isError) {
+                toast.textContent = msg;
+                toast.classList.toggle('error', !!isError);
+                toast.classList.add('show');
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 2400);
+            }
+
+            // ─────────────────────────────────────
+            // Syllable cluster segmentation (Burmese)
+            // A cluster = base consonant (+ optional stacked consonant via virama)
+            //   + attached marks (vowels, medials, tone, asat) until the next base.
+            // ─────────────────────────────────────
+            function isConsonantBaseCp(cp) {
+                return (cp >= 0x1000 && cp <= 0x1020) || INDEPENDENT_VOWELS.indexOf(cp) !== -1;
+            }
+            function isMarkCp(cp) {
+                return (cp >= 0x102B && cp <= 0x103E) || (cp >= 0x1056 && cp <= 0x105F);
+            }
+            function isMedialCp(cp) { return cp >= 0x103B && cp <= 0x103E; }
+            function isViramaCp(cp) { return cp === 0x1039; }
+
+            function segmentClusters(line) {
+                var chars = Array.from(line);
+                var clusters = [];
+                var i = 0;
+                while (i < chars.length) {
+                    var cp = chars[i].codePointAt(0);
+                    if (!isConsonantBaseCp(cp) && !isMarkCp(cp)) {
+                        clusters.push({ full: chars[i], base: chars[i], hasMarks: false });
+                        i++; continue;
+                    }
+                    var full = chars[i]; i++;
+                    // Stacked consonant (virama + consonant)
+                    while (i < chars.length && isViramaCp(chars[i].codePointAt(0))
+                           && i + 1 < chars.length && isConsonantBaseCp(chars[i + 1].codePointAt(0))) {
+                        full += chars[i] + chars[i + 1];
+                        i += 2;
+                    }
+                    // Attach marks
+                    var hasMarks = false;
+                    while (i < chars.length) {
+                        var cp2 = chars[i].codePointAt(0);
+                        if (isConsonantBaseCp(cp2)) break;
+                        if (isMarkCp(cp2)) {
+                            full += chars[i];
+                            if (!isMedialCp(cp2) && !isViramaCp(cp2)) hasMarks = true;
+                            i++; continue;
+                        }
+                        break;
+                    }
+                    // base = consonant(s) + medials + virama (the non-vowel parts)
+                    var base = '';
+                    var baseChars = Array.from(full);
+                    for (var bi = 0; bi < baseChars.length; bi++) {
+                        var bcp = baseChars[bi].codePointAt(0);
+                        if (isConsonantBaseCp(bcp) || isMedialCp(bcp) || isViramaCp(bcp)) base += baseChars[bi];
+                    }
+                    clusters.push({ full: full, base: base, hasMarks: hasMarks });
+                }
+                return clusters;
+            }
+
+            // ─────────────────────────────────────
+            // Render one line → PNG data URL
+            //
+            // Uses native canvas fillText (the browser shapes Burmese correctly) and
+            // per-cluster compositing to color vowel marks independently:
+            //   1. Render the full cluster in consonant (dark) color.
+            //   2. On a temp canvas, render the full cluster in vowel (red) color.
+            //   3. Build a consonant-only mask and destination-out it from the temp,
+            //      leaving only the vowel-mark pixels in red.
+            //   4. Composite the red vowel overlay onto the dark base.
+            //
+            // SVG/html2canvas can't do this: rasterized SVG paints an entire shaped
+            // cluster in one color, and html2canvas draws each <span> separately so
+            // combining marks lose their base and vanish.
+            // ─────────────────────────────────────
+            function renderLineToCanvas(line, fontSize) {
+                var fontStr = '500 ' + fontSize + 'px CherryUnicode';
+                var padding = Math.round(fontSize * 0.6);
+                var scale = 2; // retina
+
+                return document.fonts.load(fontStr).catch(function () {}).then(function () {
+                    return document.fonts.ready;
+                }).then(function () {
+                    var clusters = segmentClusters(line);
+
+                    // Measure cluster widths
+                    var measureCtx = document.createElement('canvas').getContext('2d');
+                    measureCtx.font = fontStr;
+                    var clusterWidths = [];
+                    var totalWidth = 0;
+                    for (var ci = 0; ci < clusters.length; ci++) {
+                        var w = measureCtx.measureText(clusters[ci].full).width;
+                        clusterWidths.push(w);
+                        totalWidth += w;
+                    }
+
+                    var width = Math.max(1, Math.ceil(totalWidth + padding * 2));
+                    var height = Math.max(1, Math.ceil(fontSize * 1.4 + padding * 2));
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = width * scale;
+                    canvas.height = height * scale;
+                    var ctx = canvas.getContext('2d');
+                    ctx.scale(scale, scale);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.font = fontStr;
+                    ctx.textBaseline = 'top';
+
+                    var x = padding;
+                    for (var i = 0; i < clusters.length; i++) {
+                        var cl = clusters[i];
+                        var cw = clusterWidths[i];
+
+                        if (!cl.hasMarks) {
+                            // No vowel marks to color — render the whole cluster dark
+                            ctx.fillStyle = CONSONANT_COLOR;
+                            ctx.fillText(cl.full, x, padding);
+                        } else {
+                            // 1. Dark base (full cluster, correctly shaped)
+                            ctx.fillStyle = CONSONANT_COLOR;
+                            ctx.fillText(cl.full, x, padding);
+
+                            // 2. Temp canvas: full cluster in red
+                            var tw = Math.ceil(cw) + 4;
+                            var th = height;
+                            var temp = document.createElement('canvas');
+                            temp.width = tw; temp.height = th;
+                            var tctx = temp.getContext('2d');
+                            tctx.font = fontStr;
+                            tctx.textBaseline = 'top';
+                            tctx.fillStyle = VOWEL_COLOR;
+                            tctx.fillText(cl.full, 0, padding);
+
+                            // 3. Consonant-only mask (opaque where consonant glyphs are)
+                            var mask = document.createElement('canvas');
+                            mask.width = tw; mask.height = th;
+                            var mctx = mask.getContext('2d');
+                            mctx.font = fontStr;
+                            mctx.textBaseline = 'top';
+                            mctx.fillStyle = '#000';
+                            mctx.fillText(cl.base, 0, padding);
+
+                            // 4. Remove consonant pixels from temp → only vowel pixels remain in red
+                            tctx.globalCompositeOperation = 'destination-out';
+                            tctx.drawImage(mask, 0, 0);
+
+                            // 5. Overlay red vowels onto the dark base
+                            ctx.drawImage(temp, 0, 0, tw, th, x, 0, tw, th);
+                        }
+                        x += cw;
+                    }
+
+                    return canvas;
+                });
+            }
+
+            function renderLineToPng(line, fontSize) {
+                return renderLineToCanvas(line, fontSize).then(function (canvas) {
+                    return canvas.toDataURL('image/png');
+                });
+            }
+
+            // Render all lines stacked vertically into a single PNG.
+            function renderAllLinesToPng(lines, fontSize) {
+                var scale = 2;
+                var gap = Math.round(fontSize * 0.35) * scale; // physical px between lines
+                var rendered = [];
+
+                var chain = Promise.resolve();
+                lines.forEach(function (line, idx) {
+                    chain = chain.then(function () {
+                        return renderLineToCanvas(line, fontSize).then(function (canvas) {
+                            rendered.push(canvas);
+                        });
+                    });
+                });
+
+                return chain.then(function () {
+                    var maxWidth = 0;
+                    var totalHeight = 0;
+                    for (var i = 0; i < rendered.length; i++) {
+                        if (rendered[i].width > maxWidth) maxWidth = rendered[i].width;
+                        totalHeight += rendered[i].height;
+                        if (i > 0) totalHeight += gap;
+                    }
+
+                    var combined = document.createElement('canvas');
+                    combined.width = maxWidth;
+                    combined.height = totalHeight;
+                    var ctx = combined.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, maxWidth, totalHeight);
+
+                    var y = 0;
+                    for (var j = 0; j < rendered.length; j++) {
+                        ctx.drawImage(rendered[j], 0, y);
+                        y += rendered[j].height;
+                        if (j < rendered.length - 1) y += gap;
+                    }
+
+                    return combined.toDataURL('image/png');
+                });
+            }
+
+            // ─────────────────────────────────────
+            // Download
+            // ─────────────────────────────────────
+            function download() {
+                var lines = getLines();
+                if (lines.length === 0) {
+                    showToast('Please enter some text first.', true);
+                    return;
+                }
+                if (perLineToggle.checked) {
+                    downloadZip(lines);
+                } else {
+                    downloadSingle(lines);
+                }
+            }
+
+            function downloadSingle(lines) {
+                btnDownload.disabled = true;
+                var originalLabel = btnDownload.textContent;
+                btnDownload.textContent = '⏳ Generating image…';
+
+                var fontSize = parseInt(fontSizeSelect.value, 10);
+                renderAllLinesToPng(lines, fontSize).then(function (dataUrl) {
+                    var a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = 'text-image.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    showToast('✓ Saved image');
+                }).catch(function (err) {
+                    console.error(err);
+                    showToast('Error: ' + (err && err.message ? err.message : err), true);
+                }).finally(function () {
+                    btnDownload.disabled = false;
+                    btnDownload.textContent = originalLabel;
+                });
+            }
+
+            function downloadZip(lines) {
+                if (typeof JSZip === 'undefined') {
+                    showToast('Libraries still loading — try again in a moment.', true);
+                    return;
+                }
+
+                btnDownload.disabled = true;
+                var originalLabel = btnDownload.textContent;
+                btnDownload.textContent = '⏳ Generating ' + lines.length + ' images…';
+
+                var fontSize = parseInt(fontSizeSelect.value, 10);
+                var zip = new JSZip();
+
+                var chain = Promise.resolve();
+                lines.forEach(function(line, idx) {
+                    chain = chain.then(function() {
+                        var num = String(idx + 1).padStart(2, '0');
+                        return renderLineToPng(line, fontSize).then(function(dataUrl) {
+                            var base64 = dataUrl.split(',')[1];
+                            zip.file('line-' + num + '.png', base64, { base64: true });
+                            btnDownload.textContent = '⏳ ' + (idx + 1) + '/' + lines.length + '…';
+                        });
+                    });
+                });
+
+                chain.then(function() {
+                    return zip.generateAsync({ type: 'blob' });
+                }).then(function(blob) {
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'text-images.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+                    showToast('✓ Saved ' + lines.length + ' image' + (lines.length > 1 ? 's' : ''));
+                }).catch(function(err) {
+                    console.error(err);
+                    showToast('Error: ' + (err && err.message ? err.message : err), true);
+                }).finally(function() {
+                    btnDownload.disabled = false;
+                    btnDownload.textContent = originalLabel;
+                });
+            }
+
+            // Update UI labels to match the current toggle state
+            function syncToggleLabels() {
+                var perLine = perLineToggle.checked;
+                textLabel.textContent = perLine
+                    ? 'Text (one line per image)'
+                    : 'Text (all lines → one image)';
+                toggleLabel.textContent = perLine ? 'Per line' : 'Single';
+                if (!btnDownload.disabled) {
+                    btnDownload.textContent = perLine ? '⬇ Download ZIP' : '⬇ Download PNG';
+                }
+                footerNote.innerHTML = perLine
+                    ? '💡 One PNG per non-empty line. Vowels &amp; marks render in red, consonants in dark brown — same as kg-practice.'
+                    : '💡 All non-empty lines combined into one PNG. Vowels &amp; marks render in red, consonants in dark brown.';
+            }
+
+            // ─────────────────────────────────────
+            // Events
+            // ─────────────────────────────────────
+            inputText.addEventListener('input', schedulePreview);
+            fontSizeSelect.addEventListener('change', schedulePreview);
+            perLineToggle.addEventListener('change', function() {
+                syncToggleLabels();
+                schedulePreview();
+            });
+
+            btnPrev.addEventListener('click', function () { navigatePreview(-1); });
+            btnNext.addEventListener('click', function () { navigatePreview(1); });
+
+            btnDownload.addEventListener('click', function() { download(); });
+            btnClear.addEventListener('click', function() {
+                inputText.value = '';
+                renderPreview();
+                inputText.focus();
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Cmd/Ctrl + S → download
+                if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+                    e.preventDefault();
+                    download();
+                    return;
+                }
+                // ← / → arrows navigate preview (only when not typing in a field)
+                var tag = (document.activeElement && document.activeElement.tagName) || '';
+                if (tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'SELECT') return;
+                if (e.key === 'ArrowLeft') { e.preventDefault(); navigatePreview(-1); }
+                else if (e.key === 'ArrowRight') { e.preventDefault(); navigatePreview(1); }
+            });
+
+            // ─────────────────────────────────────
+            // Init
+            // ─────────────────────────────────────
+            syncToggleLabels();
+            renderPreview();
+            console.log('🖼 Burmese Text → PNG ready. Cmd/Ctrl+S to download.');
+        })();
+    </script>
+</body>
+</html>
