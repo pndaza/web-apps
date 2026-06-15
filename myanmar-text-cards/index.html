@@ -373,7 +373,7 @@
 
     <div class="app-container">
         <div class="header">
-            <h1>မြန်မာစာ ပုံဖမ်း</h1>
+            <h1>ဗျည်းနှင့်သရ ထင်စွာပြ</h1>
             <div class="subtitle">Type Burmese text — each line becomes a color-coded PNG</div>
         </div>
 
@@ -396,15 +396,9 @@
                     <option value="160">XL</option>
                 </select>
 
-                <div class="legend">
-                    <span><span class="swatch" style="background:#2c1a0e"></span>consonant</span>
-                    <span><span class="swatch" style="background:#d32f2f"></span>vowel / mark</span>
-                </div>
-
                 <div class="spacer"></div>
 
                 <button class="btn btn-secondary" id="btnClear" type="button">Clear</button>
-                <button class="btn btn-primary" id="btnDownload" type="button">⬇ Download ZIP</button>
             </div>
         </div>
 
@@ -424,7 +418,11 @@
             </div>
         </div>
 
-        <p class="footer-note" id="footerNote">💡 One PNG per non-empty line. Vowels &amp; marks render in red, consonants in dark brown — same as kg-practice.</p>
+        <div class="control-row" style="justify-content: center;">
+            <button class="btn btn-primary" id="btnDownload" type="button">⬇ Export as Images</button>
+        </div>
+
+        <p class="footer-note" id="footerNote">💡 One PNG per non-empty line.</p>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -843,11 +841,11 @@
                     : 'Text (all lines → one image)';
                 toggleLabel.textContent = perLine ? 'Per line' : 'Single';
                 if (!btnDownload.disabled) {
-                    btnDownload.textContent = perLine ? '⬇ Download ZIP' : '⬇ Download PNG';
+                    btnDownload.textContent = perLine ? '⬇ Export as Images' : '⬇ Export as Image';
                 }
                 footerNote.innerHTML = perLine
-                    ? '💡 One PNG per non-empty line. Vowels &amp; marks render in red, consonants in dark brown — same as kg-practice.'
-                    : '💡 All non-empty lines combined into one PNG. Vowels &amp; marks render in red, consonants in dark brown.';
+                    ? '💡 One PNG per non-empty line.'
+                    : '💡 All non-empty lines combined into one PNG.';
             }
 
             // ─────────────────────────────────────
