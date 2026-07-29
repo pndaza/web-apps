@@ -209,7 +209,46 @@
             return cp;
         }
 
-        // Panel wiring is added in Tasks 3 and 4.
+        // --- Text → code points panel ---
+        const textInput = document.getElementById('textInput');
+        const textList = document.getElementById('textList');
+
+        function renderTextPanel() {
+            const text = textInput.value;
+            textList.innerHTML = '';
+            if (text.length === 0) {
+                const hint = document.createElement('div');
+                hint.className = 'hint';
+                hint.textContent = 'Code points will appear here as you type…';
+                textList.appendChild(hint);
+                return;
+            }
+            for (const ch of text) {
+                const cp = ch.codePointAt(0);
+                const row = document.createElement('div');
+                row.className = 'cp-row';
+
+                const glyph = document.createElement('div');
+                glyph.className = 'glyph';
+                glyph.textContent = ch;
+
+                const hex = document.createElement('div');
+                hex.className = 'hex';
+                hex.textContent = formatCodePoint(cp);
+
+                const dec = document.createElement('div');
+                dec.className = 'dec';
+                dec.textContent = cp;
+
+                row.appendChild(glyph);
+                row.appendChild(hex);
+                row.appendChild(dec);
+                textList.appendChild(row);
+            }
+        }
+
+        textInput.addEventListener('input', renderTextPanel);
+        renderTextPanel();
     </script>
 
 </body>
