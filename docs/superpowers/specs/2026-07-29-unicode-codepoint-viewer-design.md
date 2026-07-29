@@ -45,7 +45,7 @@ list renders below it, one row per code point.
 Iteration uses `for...of` on the string, which yields code points rather than
 UTF-16 code units. This means:
 
-- `ပါ` (U+1015 U+102C) renders as **two** rows.
+- `ပါ` (U+1015 U+102B) renders as **two** rows.
 - Characters outside the BMP, such as `𐍈` (U+10348) or `😀` (U+1F600), render as
   **one** row each — never mis-split into lone surrogates, which a `split('')` or
   `charCodeAt` loop would do.
@@ -111,7 +111,7 @@ sibling:
 
 Manual verification, cross-checking the two panels against each other:
 
-- `ပါ` → two rows: `U+1015` (4117) and `U+102C` (4136).
+- `ပါ` → two rows: `U+1015` (4117) and `U+102B` (4139).
 - `a` → `U+0061` (97).
 - `😀` → `U+1F600` (128512). Confirms BMP+ handling in the text panel.
 - Reverse: `1F600` in the code-point panel → `😀`. Confirms Panel 2 handles

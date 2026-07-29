@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicode Code Points</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --card-bg: #ffffff;
+            --card-shadow: 0 8px 40px rgba(180, 120, 60, 0.12), 0 2px 8px rgba(180, 120, 60, 0.08);
+            --text-dark: #3d2b1f;
+            --text-medium: #6b4d3a;
+            --text-light: #9b7b65;
+            --accent: #f0784a;
+            --accent-glow: rgba(240, 120, 74, 0.35);
+            --font-burmese: 'Noto Sans Myanmar', 'Padauk', 'Myanmar Text', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: linear-gradient(170deg, #fff8f0 0%, #fef3e8 25%, #fef7f2 50%, #fff5ed 75%, #fef9f5 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 24px 20px 60px;
+            color: var(--text-dark);
+        }
+
+        .app-container {
+            position: relative;
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header { text-align: center; margin-bottom: 4px; }
+        .header h1 {
+            font-family: var(--font-burmese);
+            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: clamp(18px, 3vw, 26px);
+            border: 1.5px solid #fef0e4;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        textarea, .cp-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-family: var(--font-burmese);
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: #fffdf9;
+            border: 1.5px solid #f0d8c4;
+            border-radius: 14px;
+            outline: none;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        textarea { min-height: 120px; resize: vertical; }
+        textarea:focus, .cp-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        textarea::placeholder, .cp-input::placeholder { color: #c4ab95; }
+
+        /* Tab bar */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1.5px solid #f3e3d2;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background: transparent;
+            border: none;
+            border-bottom: 2.5px solid transparent;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            outline: none;
+        }
+        .tab:hover { color: var(--text-medium); }
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .tab:focus-visible { box-shadow: 0 0 0 3px var(--accent-glow); border-radius: 8px; }
+        .tab-panel { display: flex; flex-direction: column; gap: 12px; }
+        .tab-panel.hidden { display: none; }
+
+        .error-msg {
+            font-size: 0.82rem;
+            color: #c0392b;
+            min-height: 1em;
+        }
+
+        /* Text → code points result list: wrapping chips */
+        .cp-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .cp-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: 3.4rem;
+            padding: 8px 10px;
+            background: #fffdf9;
+            border: 1px solid #f3e3d2;
+            border-radius: 12px;
+        }
+        .cp-chip .glyph {
+            font-family: var(--font-burmese);
+            font-size: 1.7rem;
+            text-align: center;
+            color: var(--text-dark);
+            line-height: 1.2;
+            overflow: hidden;
+        }
+        .cp-chip .hex { font-size: 0.82rem; font-weight: 600; color: var(--accent); }
+        .cp-chip .dec { font-size: 0.68rem; color: var(--text-light); font-variant-numeric: tabular-nums; }
+
+        .hint {
+            font-size: 0.85rem;
+            color: #c4ab95;
+            font-style: italic;
+        }
+
+        /* Code point → character output */
+        .cp-out {
+            font-family: var(--font-burmese);
+            font-size: 3.2rem;
+            text-align: center;
+            padding: 16px;
+            background: #fffdf9;
+            border: 1px solid #f3e3d2;
+            border-radius: 14px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-link {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .back-link a { color: var(--accent); text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>Unicode Code Points</h1>
+            <div class="subtitle">Break text into code points, or look one up</div>
+        </div>
+
+        <div class="card">
+            <div class="tabs" role="tablist">
+                <button class="tab active" id="tabText" role="tab" aria-selected="true" aria-controls="panelText" type="button">Text → code points</button>
+                <button class="tab" id="tabCp" role="tab" aria-selected="false" aria-controls="panelCp" type="button">Code point → character</button>
+            </div>
+
+            <div class="tab-panel" id="panelText" role="tabpanel" aria-labelledby="tabText">
+                <textarea id="textInput" placeholder="Type or paste any text… ဥပမာ — မင်္ဂလာပါ"></textarea>
+                <div class="cp-list" id="textList"></div>
+            </div>
+
+            <div class="tab-panel hidden" id="panelCp" role="tabpanel" aria-labelledby="tabCp">
+                <input class="cp-input" id="cpInput" type="text" placeholder="e.g. U+1015, 0x1015, or 1015" autocomplete="off">
+                <div class="error-msg" id="cpError"></div>
+                <div class="cp-out" id="cpOut"></div>
+            </div>
+        </div>
+
+        <div class="back-link"><a href="../">← All apps</a></div>
+    </div>
+
+    <script>
+        'use strict';
+
+        // Break a string into its Unicode code points.
+        // Uses for...of which iterates by code point, NOT UTF-16 code unit,
+        // so combining marks and supplementary-plane characters are never mis-split.
+        function toCodePoints(str) {
+            const out = [];
+            for (const ch of str) {
+                out.push(ch.codePointAt(0));
+            }
+            return out;
+        }
+
+        // Format a code point as U+hex, zero-padded to at least 4 digits.
+        function formatCodePoint(cp) {
+            return 'U+' + cp.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Parse a code point from user input.
+        // Accepts: U+1015, u+1015, 0x1015, or bare 1015 (always hex).
+        // Returns the integer code point, or null if invalid / out of range.
+        // Lone surrogates (0xD800–0xDFFF) return null — String.fromCodePoint
+        // cannot render them, so we reject them up front.
+        function parseCodePoint(input) {
+            if (typeof input !== 'string') return null;
+            const trimmed = input.trim();
+            if (!trimmed) return null;
+            let cleaned = trimmed.replace(/^u\+/i, '').replace(/^0x/i, '');
+            if (!/^[0-9a-fA-F]+$/.test(cleaned)) return null;
+            const cp = parseInt(cleaned, 16);
+            if (Number.isNaN(cp)) return null;
+            if (cp < 0 || cp > 0x10FFFF) return null;
+            if (cp >= 0xD800 && cp <= 0xDFFF) return null;
+            return cp;
+        }
+
+        // --- Text → code points panel ---
+        const textInput = document.getElementById('textInput');
+        const textList = document.getElementById('textList');
+
+        function renderTextPanel() {
+            const text = textInput.value;
+            textList.innerHTML = '';
+            if (text.length === 0) {
+                const hint = document.createElement('div');
+                hint.className = 'hint';
+                hint.textContent = 'Code points will appear here as you type…';
+                textList.appendChild(hint);
+                return;
+            }
+            for (const ch of text) {
+                const cp = ch.codePointAt(0);
+                const chip = document.createElement('div');
+                chip.className = 'cp-chip';
+
+                const glyph = document.createElement('div');
+                glyph.className = 'glyph';
+                glyph.textContent = ch;
+
+                const hex = document.createElement('div');
+                hex.className = 'hex';
+                hex.textContent = formatCodePoint(cp);
+
+                const dec = document.createElement('div');
+                dec.className = 'dec';
+                dec.textContent = cp;
+
+                chip.appendChild(glyph);
+                chip.appendChild(hex);
+                chip.appendChild(dec);
+                textList.appendChild(chip);
+            }
+        }
+
+        textInput.addEventListener('input', renderTextPanel);
+        renderTextPanel();
+
+        // --- Code point → character panel ---
+        const cpInput = document.getElementById('cpInput');
+        const cpError = document.getElementById('cpError');
+        const cpOut = document.getElementById('cpOut');
+
+        function renderCpPanel() {
+            cpError.textContent = '';
+            cpOut.textContent = '';
+            const cp = parseCodePoint(cpInput.value);
+            if (cp === null) {
+                const trimmed = cpInput.value.trim();
+                if (trimmed) {
+                    cpError.textContent = 'Enter a hex code point up to U+10FFFF (e.g. U+1015).';
+                }
+                return;
+            }
+            cpOut.textContent = String.fromCodePoint(cp);
+        }
+
+        cpInput.addEventListener('input', renderCpPanel);
+        renderCpPanel();
+
+        // --- Tab switching ---
+        const tabText = document.getElementById('tabText');
+        const tabCp = document.getElementById('tabCp');
+        const panelText = document.getElementById('panelText');
+        const panelCp = document.getElementById('panelCp');
+
+        function showTab(activeTab, activePanel, inactiveTab, inactivePanel) {
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
+            activePanel.classList.remove('hidden');
+            inactiveTab.classList.remove('active');
+            inactiveTab.setAttribute('aria-selected', 'false');
+            inactivePanel.classList.add('hidden');
+        }
+
+        tabText.addEventListener('click', () =>
+            showTab(tabText, panelText, tabCp, panelCp));
+        tabCp.addEventListener('click', () =>
+            showTab(tabCp, panelCp, tabText, panelText));
+    </script>
+
+</body>
+</html>
