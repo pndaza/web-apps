@@ -249,6 +249,28 @@
 
         textInput.addEventListener('input', renderTextPanel);
         renderTextPanel();
+
+        // --- Code point → character panel ---
+        const cpInput = document.getElementById('cpInput');
+        const cpError = document.getElementById('cpError');
+        const cpOut = document.getElementById('cpOut');
+
+        function renderCpPanel() {
+            cpError.textContent = '';
+            cpOut.textContent = '';
+            const cp = parseCodePoint(cpInput.value);
+            if (cp === null) {
+                const trimmed = cpInput.value.trim();
+                if (trimmed) {
+                    cpError.textContent = 'Enter a hex code point up to U+10FFFF (e.g. U+1015).';
+                }
+                return;
+            }
+            cpOut.textContent = String.fromCodePoint(cp);
+        }
+
+        cpInput.addEventListener('input', renderCpPanel);
+        renderCpPanel();
     </script>
 
 </body>
