@@ -173,7 +173,42 @@
     </div>
 
     <script>
-        // Logic functions are added in Task 2.
+        'use strict';
+
+        // Break a string into its Unicode code points.
+        // Uses for...of which iterates by code point, NOT UTF-16 code unit,
+        // so combining marks and supplementary-plane characters are never mis-split.
+        function toCodePoints(str) {
+            const out = [];
+            for (const ch of str) {
+                out.push(ch.codePointAt(0));
+            }
+            return out;
+        }
+
+        // Format a code point as U+hex, zero-padded to at least 4 digits.
+        function formatCodePoint(cp) {
+            return 'U+' + cp.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Parse a code point from user input.
+        // Accepts: U+1015, u+1015, 0x1015, or bare 1015 (always hex).
+        // Returns the integer code point, or null if invalid / out of range.
+        // Lone surrogates (0xD800–0xDFFF) return null — String.fromCodePoint
+        // cannot render them, so we reject them up front.
+        function parseCodePoint(input) {
+            if (typeof input !== 'string') return null;
+            const trimmed = input.trim();
+            if (!trimmed) return null;
+            let cleaned = trimmed.replace(/^u\+/i, '').replace(/^0x/i, '');
+            if (!/^[0-9a-fA-F]+$/.test(cleaned)) return null;
+            const cp = parseInt(cleaned, 16);
+            if (Number.isNaN(cp)) return null;
+            if (cp < 0 || cp > 0x10FFFF) return null;
+            if (cp >= 0xD800 && cp <= 0xDFFF) return null;
+            return cp;
+        }
+
         // Panel wiring is added in Tasks 3 and 4.
     </script>
 
