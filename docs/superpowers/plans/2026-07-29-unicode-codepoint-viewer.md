@@ -301,7 +301,9 @@ const html = fs.readFileSync('codepoints/index.html', 'utf8');
 // Pull the three function definitions out of the <script> block and eval them.
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 if (!scriptMatch) { console.error('no script block found'); process.exit(1); }
-eval(scriptMatch[1]);
+// The script begins with 'use strict';. A direct eval of strict-mode source does
+// not leak function declarations to this scope, so strip that directive first.
+eval(scriptMatch[1].replace(/^\s*'use strict';\s*/, ''));
 
 let pass = 0, fail = 0;
 function eq(actual, expected, label) {
@@ -314,14 +316,14 @@ function eq(actual, expected, label) {
 // --- toCodePoints ---
 eq(toCodePoints(''), [], 'empty string -> []');
 eq(toCodePoints('a'), [0x61], 'a -> [0x61]');
-eq(toCodePoints('ပါ'), [0x1015, 0x102C], 'ပါ -> two code points (combining mark not merged)');
+eq(toCodePoints('ပါ'), [0x1015, 0x102B], 'ပါ -> two code points (combining mark not merged)');
 eq(toCodePoints('😀'), [0x1F600], 'emoji -> one code point (supplementary plane, not split into surrogates)');
 eq(toCodePoints('𐍈'), [0x10348], 'U+10348 -> one code point');
 
 // --- formatCodePoint ---
 eq(formatCodePoint(0x61), 'U+0061', '0x61 -> U+0061 (4-digit padding)');
 eq(formatCodePoint(0x1015), 'U+1015', '0x1015 -> U+1015');
-eq(formatCodePoint(0x102C), 'U+102C', '0x102C -> U+102C');
+eq(formatCodePoint(0x102B), 'U+102B', '0x102B -> U+102B');
 eq(formatCodePoint(0x1F600), 'U+1F600', '0x1F600 -> U+1F600 (>4 digits)');
 eq(formatCodePoint(0x10348), 'U+10348', '0x10348 -> U+10348');
 
@@ -422,7 +424,7 @@ with:
 
 - [ ] **Step 2: Verify the text panel in the browser**
 
-Open `codepoints/index.html`. Type `မင်္ဂလာပါ`. Expected: one row per code point, each showing the glyph, `U+xxxx` in orange, and the decimal number. Confirm `ပါ` near the end shows as **two** rows (`U+1015`, `U+102C`). Type `a` → one row `U+0061` / `97`. Type an emoji like `😀` → one row `U+1F600` / `128512` (not two surrogate rows). Clear the box → the faint hint text returns.
+Open `codepoints/index.html`. Type `မင်္ဂလာပါ`. Expected: one row per code point, each showing the glyph, `U+xxxx` in orange, and the decimal number. Confirm `ပါ` near the end shows as **two** rows (`U+1015`, `U+102B`). Type `a` → one row `U+0061` / `97`. Type an emoji like `😀` → one row `U+1F600` / `128512` (not two surrogate rows). Clear the box → the faint hint text returns.
 
 - [ ] **Step 3: Commit**
 
@@ -530,7 +532,7 @@ git commit -m "Add Unicode Code Points to app listing"
 After all tasks complete, run the spec's full cross-check matrix in the browser:
 
 1. Open `codepoints/index.html` via the root listing.
-2. **Text panel:** `မင်္ဂလာပါ` → code points including `ပါ` as two rows (`U+1015`, `U+102C`); `a` → `U+0061`/`97`; `😀` → `U+1F600`/`128512` (one row, not two).
+2. **Text panel:** `မင်္ဂလာပါ` → code points including `ပါ` as two rows (`U+1015`, `U+102B`); `a` → `U+0061`/`97`; `😀` → `U+1F600`/`128512` (one row, not two).
 3. **Codepoint panel:** `1F600` → `😀`; `U+1015` → `ပ` (agrees with the text panel's glyph for U+1015); `GGGG` / `110000` / `D800` → red error, no glyph.
 4. No console errors on either page. No network requests beyond the Google Fonts stylesheet (confirm in DevTools → Network that there are no third-party script/data fetches — the viewer must be dependency-free per spec).
 
