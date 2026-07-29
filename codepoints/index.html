@@ -95,28 +95,29 @@
             min-height: 1em;
         }
 
-        /* Text → code points result list */
-        .cp-list { display: flex; flex-direction: column; gap: 6px; }
-        .cp-row {
-            display: grid;
-            grid-template-columns: 56px 1fr auto;
+        /* Text → code points result list: wrapping chips */
+        .cp-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .cp-chip {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 14px;
-            padding: 8px 12px;
+            gap: 2px;
+            min-width: 3.4rem;
+            padding: 8px 10px;
             background: #fffdf9;
             border: 1px solid #f3e3d2;
             border-radius: 12px;
         }
-        .cp-row .glyph {
+        .cp-chip .glyph {
             font-family: var(--font-burmese);
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             text-align: center;
             color: var(--text-dark);
             line-height: 1.2;
             overflow: hidden;
         }
-        .cp-row .hex { font-size: 0.95rem; font-weight: 600; color: var(--accent); }
-        .cp-row .dec { font-size: 0.8rem; color: var(--text-light); font-variant-numeric: tabular-nums; }
+        .cp-chip .hex { font-size: 0.82rem; font-weight: 600; color: var(--accent); }
+        .cp-chip .dec { font-size: 0.68rem; color: var(--text-light); font-variant-numeric: tabular-nums; }
 
         .hint {
             font-size: 0.85rem;
@@ -225,8 +226,8 @@
             }
             for (const ch of text) {
                 const cp = ch.codePointAt(0);
-                const row = document.createElement('div');
-                row.className = 'cp-row';
+                const chip = document.createElement('div');
+                chip.className = 'cp-chip';
 
                 const glyph = document.createElement('div');
                 glyph.className = 'glyph';
@@ -240,10 +241,10 @@
                 dec.className = 'dec';
                 dec.textContent = cp;
 
-                row.appendChild(glyph);
-                row.appendChild(hex);
-                row.appendChild(dec);
-                textList.appendChild(row);
+                chip.appendChild(glyph);
+                chip.appendChild(hex);
+                chip.appendChild(dec);
+                textList.appendChild(chip);
             }
         }
 
