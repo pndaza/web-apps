@@ -89,6 +89,35 @@
         }
         textarea::placeholder, .cp-input::placeholder { color: #c4ab95; }
 
+        /* Tab bar */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1.5px solid #f3e3d2;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background: transparent;
+            border: none;
+            border-bottom: 2.5px solid transparent;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            outline: none;
+        }
+        .tab:hover { color: var(--text-medium); }
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .tab:focus-visible { box-shadow: 0 0 0 3px var(--accent-glow); border-radius: 8px; }
+        .tab-panel { display: flex; flex-direction: column; gap: 12px; }
+        .tab-panel.hidden { display: none; }
+
         .error-msg {
             font-size: 0.82rem;
             color: #c0392b;
@@ -158,16 +187,21 @@
         </div>
 
         <div class="card">
-            <label for="textInput">Text → code points</label>
-            <textarea id="textInput" placeholder="Type or paste any text… ဥပမာ — မင်္ဂလာပါ"></textarea>
-            <div class="cp-list" id="textList"></div>
-        </div>
+            <div class="tabs" role="tablist">
+                <button class="tab active" id="tabText" role="tab" aria-selected="true" aria-controls="panelText" type="button">Text → code points</button>
+                <button class="tab" id="tabCp" role="tab" aria-selected="false" aria-controls="panelCp" type="button">Code point → character</button>
+            </div>
 
-        <div class="card">
-            <label for="cpInput">Code point → character</label>
-            <input class="cp-input" id="cpInput" type="text" placeholder="e.g. U+1015, 0x1015, or 1015" autocomplete="off">
-            <div class="error-msg" id="cpError"></div>
-            <div class="cp-out" id="cpOut"></div>
+            <div class="tab-panel" id="panelText" role="tabpanel" aria-labelledby="tabText">
+                <textarea id="textInput" placeholder="Type or paste any text… ဥပမာ — မင်္ဂလာပါ"></textarea>
+                <div class="cp-list" id="textList"></div>
+            </div>
+
+            <div class="tab-panel hidden" id="panelCp" role="tabpanel" aria-labelledby="tabCp">
+                <input class="cp-input" id="cpInput" type="text" placeholder="e.g. U+1015, 0x1015, or 1015" autocomplete="off">
+                <div class="error-msg" id="cpError"></div>
+                <div class="cp-out" id="cpOut"></div>
+            </div>
         </div>
 
         <div class="back-link"><a href="../">← All apps</a></div>
@@ -272,6 +306,26 @@
 
         cpInput.addEventListener('input', renderCpPanel);
         renderCpPanel();
+
+        // --- Tab switching ---
+        const tabText = document.getElementById('tabText');
+        const tabCp = document.getElementById('tabCp');
+        const panelText = document.getElementById('panelText');
+        const panelCp = document.getElementById('panelCp');
+
+        function showTab(activeTab, activePanel, inactiveTab, inactivePanel) {
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
+            activePanel.classList.remove('hidden');
+            inactiveTab.classList.remove('active');
+            inactiveTab.setAttribute('aria-selected', 'false');
+            inactivePanel.classList.add('hidden');
+        }
+
+        tabText.addEventListener('click', () =>
+            showTab(tabText, panelText, tabCp, panelCp));
+        tabCp.addEventListener('click', () =>
+            showTab(tabCp, panelCp, tabText, panelText));
     </script>
 
 </body>
